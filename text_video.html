@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Image Creator</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* CSS Root Variables for theme colors */
+        :root {
+            --bg-base: #0f121a;
+            --surface: #181f2c;
+            --surface-border: #263248;
+            --primary: #38bdf8;
+            --primary-hover: #0ea5e9;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent-glow: rgba(56, 189, 248, 0.15);
+        }
+
+        /* Global Reset and Font Styling */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-base);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px 20px;
+        }
+
+        /* Header Layout Styling */
+        .header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .badge {
+            background: rgba(56, 189, 248, 0.1);
+            color: var(--primary);
+            border: 1px solid rgba(56, 189, 248, 0.2);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            font-weight: 700;
+        }
+
+        .header p {
+            color: var(--text-muted);
+            font-size: 14px;
+            margin-top: 5px;
+        }
+
+        /* Main Workspace Box */
+        .workspace {
+            background: var(--surface);
+            border: 1px solid var(--surface-border);
+            border-radius: 16px;
+            width: 100%;
+            max-width: 580px;
+            padding: 24px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            margin-bottom: 30px;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            margin-bottom: 15px;
+        }
+
+        label {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        textarea {
+            width: 100%;
+            height: 80px;
+            background: #111622;
+            border: 1px solid var(--surface-border);
+            border-radius: 10px;
+            padding: 12px;
+            color: var(--text-main);
+            font-size: 14px;
+            resize: none;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        textarea:focus, select:focus {
+            border-color: var(--primary);
+        }
+
+        .options-row {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 18px;
+        }
+
+        .select-group {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        select {
+            width: 100%;
+            background: #111622;
+            border: 1px solid var(--surface-border);
+            border-radius: 10px;
+            padding: 10px;
+            color: var(--text-main);
+            font-size: 13px;
+            outline: none;
+            cursor: pointer;
+        }
+
+        /* Generate Button Styling */
+        .btn-generate {
+            width: 100%;
+            padding: 13px;
+            background: var(--primary);
+            color: #0b111a;
+            border: none;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
+        .btn-generate:hover {
+            opacity: 0.9;
+        }
+
+        .btn-generate:disabled {
+            background: #2a374e;
+            color: #64748b;
+            cursor: not-allowed;
+        }
+
+        /* Status message box */
+        .status-panel {
+            margin-top: 15px;
+            padding: 10px 12px;
+            background: #111622;
+            border-radius: 8px;
+            border: 1px solid var(--surface-border);
+            font-size: 13px;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+        }
+
+        .status-dot {
+            height: 8px;
+            width: 8px;
+            background: #4ade80;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 8px;
+        }
+
+        /* Result Image Container */
+        .output-card {
+            margin-top: 20px;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            background: #111622;
+            border: 1px solid var(--surface-border);
+            border-radius: 12px;
+            padding: 14px;
+        }
+
+        #result-image {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+        }
+
+        /* Download Button Styling */
+        .btn-download {
+            margin-top: 12px;
+            padding: 9px 20px;
+            background: var(--primary);
+            color: #0b111a;
+            border: none;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
+        .btn-download:hover {
+            opacity: 0.9;
+        }
+
+        /* History Section Styling for past 5 images */
+        .history-container {
+            width: 100%;
+            max-width: 580px;
+            display: none;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .history-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-muted);
+        }
+
+        .history-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 10px;
+        }
+
+        .history-thumb {
+            width: 100%;
+            aspect-ratio: 1;
+            object-fit: cover;
+            border-radius: 8px;
+            border: 1px solid var(--surface-border);
+            cursor: pointer;
+            transition: transform 0.2s, border-color 0.2s;
+        }
+
+        .history-thumb:hover {
+            transform: scale(1.05);
+            border-color: var(--primary);
+        }
+
+        @media (max-width: 500px) {
+            .history-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- App Header Section -->
+    <div class="header">
+        <span class="badge">AI Magic Studio</span>
+        <h1>Bring your thoughts to life</h1>
+        <p>Type what you imagine, pick a style, and create stunning pictures instantly.</p>
+    </div>
+
+    <!-- Main Workspace Container -->
+    <div class="workspace">
+        <!-- Textarea for entering the user prompt -->
+        <div class="input-group">
+            <label for="prompt">What do you want to create?</label>
+            <textarea id="prompt" placeholder="A cute little puppy sitting inside a blue mug..."></textarea>
+        </div>
+
+        <!-- Dropdowns for choosing style and frame size -->
+        <div class="options-row">
+            <div class="select-group">
+                <label for="style-select">Choose Style</label>
+                <select id="style-select">
+                    <option value="">Normal / Realistic</option>
+                    <option value=", beautiful anime style, vibrant colors, detailed">Anime Style</option>
+                    <option value=", 3D cartoon style, Pixar animation look">3D Cartoon</option>
+                    <option value=", dark cinematic lighting, moody atmosphere">Cinematic Dark</option>
+                    <option value=", soft watercolor painting style">Watercolor</option>
+                </select>
+            </div>
+
+            <div class="select-group">
+                <label for="ratio-select">Frame Size</label>
+                <select id="ratio-select">
+                    <option value="square">Square</option>
+                    <option value="landscape">Landscape (Wide)</option>
+                    <option value="portrait">Portrait (Tall)</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Button to trigger image generation -->
+        <button class="btn-generate" id="generate-btn">
+            Create Image
+        </button>
+
+        <!-- Status update panel -->
+        <div class="status-panel">
+            <span class="status-dot" id="status-indicator"></span>
+            <span id="status-text">Ready when you are!</span>
+        </div>
+
+        <!-- Output display box for generated image -->
+        <div class="output-card" id="output-wrapper">
+            <img id="result-image" alt="Generated Output" />
+            <button class="btn-download" id="download-btn">Download Picture</button>
+        </div>
+    </div>
+
+    <!-- History Container for recent 5 images -->
+    <div class="history-container" id="history-section">
+        <span class="history-title">Recent Creations (Last 5)</span>
+        <div class="history-grid" id="history-grid"></div>
+    </div>
+
+    <script>
+        // DOM Elements mapping
+        const generateBtn = document.getElementById('generate-btn');
+        const promptInput = document.getElementById('prompt');
+        const styleSelect = document.getElementById('style-select');
+        const ratioSelect = document.getElementById('ratio-select');
+        const statusText = document.getElementById('status-text');
+        const statusDot = document.getElementById('status-indicator');
+        const outputWrapper = document.getElementById('output-wrapper');
+        const resultImage = document.getElementById('result-image');
+        const downloadBtn = document.getElementById('download-btn');
+        const historySection = document.getElementById('history-section');
+        const historyGrid = document.getElementById('history-grid');
+
+        let currentImageBlob = null;
+        let currentDataUrl = null;
+
+        // Load saved history from LocalStorage when page opens
+        window.addEventListener('DOMContentLoaded', renderHistory);
+
+        // Event listener for generating new image
+        generateBtn.addEventListener('click', async () => {
+            const rawPrompt = promptInput.value.trim();
+            if (!rawPrompt) return alert('Please type something first!');
+
+            generateBtn.disabled = true;
+            statusDot.style.background = '#f59e0b';
+            statusText.innerText = 'Creating your masterpiece... Please wait.';
+            outputWrapper.style.display = 'none';
+
+            // Append selected style modifier to user prompt
+            const finalPrompt = rawPrompt + styleSelect.value;
+            const encodedPrompt = encodeURIComponent(finalPrompt);
+
+            // Set image dimensions based on aspect ratio selection
+            let imgWidth = 768;
+            let imgHeight = 768;
+            
+            if (ratioSelect.value === 'landscape') {
+                imgWidth = 1024;
+               imgHeight = 576;
+            } else if (ratioSelect.value === 'portrait') {
+                imgWidth = 576;
+                imgHeight = 1024;
+            }
+
+            // Generate random seed for unique results
+            const randomSeed = Math.floor(Math.random() * 1000000);
+            const fetchUrl = `https://image.pollinations.ai/prompt/${encodedPrompt}?seed=${randomSeed}&width=${imgWidth}&height=${imgHeight}&nologo=true`;
+
+            try {
+                // Fetch image from Pollinations API as raw data
+                const response = await fetch(fetchUrl);
+                if (!response.ok) throw new Error('Failed to generate');
+                
+                currentImageBlob = await response.blob();
+                currentDataUrl = await blobToDataURL(currentImageBlob);
+
+                const localBlobUrl = URL.createObjectURL(currentImageBlob);
+                resultImage.src = localBlobUrl;
+                outputWrapper.style.display = 'flex';
+                
+                // Save image to browser storage history (keeps last 5 items)
+                saveToHistory(currentDataUrl);
+
+                statusDot.style.background = '#4ade80';
+                statusText.innerText = 'Here is your image!';
+            } catch (err) {
+                console.error(err);
+                statusDot.style.background = '#ef4444';
+                statusText.innerText = 'Oops! Something went wrong. Try again.';
+            } finally {
+                generateBtn.disabled = false;
+            }
+        });
+
+        // Event listener for downloading the active image
+        downloadBtn.addEventListener('click', () => {
+            if (!currentImageBlob) return;
+
+            const tempUrl = URL.createObjectURL(currentImageBlob);
+            const downloadAnchor = document.createElement('a');
+            downloadAnchor.href = tempUrl;
+            downloadAnchor.download = 'my-ai-image.jpg';
+            document.body.appendChild(downloadAnchor);
+            downloadAnchor.click();
+            document.body.removeChild(downloadAnchor);
+            URL.revokeObjectURL(tempUrl);
+        });
+
+        // Helper function: Convert image blob to base64 format for LocalStorage
+        function blobToDataURL(blob) {
+            return new Promise((resolve) => {
+                const reader = new FileReader();
+                reader.onload = () => resolve(reader.result);
+                reader.readAsDataURL(blob);
+            });
+        }
+
+        // Function to manage and save items in browser LocalStorage
+        function saveToHistory(dataUrl) {
+            let history = JSON.parse(localStorage.getItem('ai_image_history') || '[]');
+            history.unshift(dataUrl); // Add new image to the beginning
+            if (history.length > 5) history.pop(); // Keep maximum 5 items
+            localStorage.setItem('ai_image_history', JSON.stringify(history));
+            renderHistory();
+        }
+
+        // Function to display history thumbnails on the UI
+        function renderHistory() {
+            let history = JSON.parse(localStorage.getItem('ai_image_history') || '[]');
+            historyGrid.innerHTML = '';
+
+            if (history.length > 0) {
+                historySection.style.display = 'flex';
+                history.forEach(dataUrl => {
+                    const img = document.createElement('img');
+                    img.src = dataUrl;
+                    img.className = 'history-thumb';
+                    // Click history thumbnail to view it back in main viewer
+                    img.addEventListener('click', () => {
+                        resultImage.src = dataUrl;
+                        outputWrapper.style.display = 'flex';
+                        // Convert back to blob for downloading if needed later
+                        fetch(dataUrl)
+                            .then(res => res.blob())
+                            .then(blob => {
+                                currentImageBlob = blob;
+                            });
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                    });
+                    historyGrid.appendChild(img);
+                });
+            } else {
+                historySection.style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>
