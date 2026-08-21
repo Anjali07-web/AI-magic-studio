@@ -6,8 +6,7 @@ A sleek, responsive, and client-side AI image generation web app wrapped for And
 ## 🚀 Features
 * **Multi-Style Support:** Generate realistic, anime, 3D cartoon, dark cinematic, or watercolor images.
 * **Aspect Ratio Control:** Switch between Square, Landscape, and Portrait frames.
-* **Local History Storage:** Automatically saves the last 5 generated creations using browser `LocalStorage`.
-* **Zero Backend Required:** Directly communicates with the Pollinations AI API.
+* **Local History Storage:** Automatically saves the last 5 generated creations using browser `LocalStorage`
 
 ## 🛠️ Tech Stack
 * **Frontend:** HTML5, CSS3, JavaScript (Vanilla)
