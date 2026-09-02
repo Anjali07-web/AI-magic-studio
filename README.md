@@ -8,11 +8,10 @@ A sleek, responsive, and client-side AI image generation web app wrapped for And
 * **Aspect Ratio Control:** Switch between Square, Landscape, and Portrait frames.
 * **Local History Storage:** Automatically saves the last 5 generated creations using browser `LocalStorage`
 
-##Live Demo:https://anjali07-web.github.io/AI-magic-studio/
+**Live Demo****:https://anjali07-web.github.io/AI-magic-studio/
 
 ​AI Magic Studio (Text-to-Image): https://anjali07-web.github.io/AI-magic-studio/
 
-​Thank you so much!
 ## 🛠️ Tech Stack
 * **Frontend:** HTML5, CSS3, JavaScript (Vanilla)
 * **Design System:** Custom CSS variables with a modern dark UI
